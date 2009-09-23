@@ -280,7 +280,8 @@ severity=1
 [Modules::RequireEndWithOne]
 # End our code with 1; rather than "Club Sandwitch"
 # ...boring, but probably a good idea
-severity=3
+# except it doens't seem to work.  DISABLED
+severity=1
 
 [Modules::RequireExplicitPackage]
 # make sure that people start modules with "package ..."
