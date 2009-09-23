@@ -66,30 +66,30 @@ argument to the constructor) and read only.
 
 =cut
 
-# around BUILDARGS {
-#   my %args = (ref $_[0] eq "HASH") ? %{ $_[0] } : @_;
-#
-#   # force the user to either use "expiry" or "expire_seconds" and "expire_microseconds" not both
-#   if ((defined $args{expiry} && defined $args{expiry_seconds}) ||
-#       (defined $args{expiry} && defined $args{expiry_microseconds})) {
-#     croak "Can't pass both expiry and expiry_seconds / expiry_microseconds";
-#   }
-#
-#   # change expiry into expiry_seconds and expiry_microseconds
-#   if (defined $args{expiry}) {
-#     my $seconds = delete $args{expiry};
-#     my $int_seconds = int($seconds);
-#     $args{expiry_seconds} = $int_seconds;
-#     $args{expiry_microseconds} = int( ($seconds - $int_seconds) * 1_000_000 );
-#   }
-#
-#   # check that they've passed some expirey time of some kind
-#   unless ($args{expiry_seconds} || $args{expirey_microseconds}) {
-#     croak "zero expiry time passed";
-#   }
-#
-#   $self->$orig(\%args);
-# }
+around BUILDARGS ($class: @args) {
+  my %args = (ref $args[0] eq "HASH") ? %{ $args[0] } : @args;
+
+  # force the user to either use "expiry" or "expire_seconds" and "expire_microseconds" not both
+  if ((defined $args{expiry} && defined $args{expiry_seconds}) ||
+      (defined $args{expiry} && defined $args{expiry_microseconds})) {
+    croak "Can't pass both expiry and expiry_seconds / expiry_microseconds";
+  }
+
+  # change expiry into expiry_seconds and expiry_microseconds
+  if (defined $args{expiry}) {
+    my $seconds = delete $args{expiry};
+    my $int_seconds = int($seconds);
+    $args{expiry_seconds} = $int_seconds;
+    $args{expiry_microseconds} = int( ($seconds - $int_seconds) * 1_000_000 );
+  }
+
+  # check that they've passed some expirey time of some kind
+  unless ($args{expiry_seconds} || $args{expiry_microseconds}) {
+    croak "zero expiry time passed";
+  }
+
+  $class->$orig(\%args);
+}
 
 has expiry_seconds => (
   is => 'ro',
